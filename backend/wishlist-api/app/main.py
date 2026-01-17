@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from app.models import user
 from app.routes.auth import router as auth_router
 from app.db.base import init_db
 
