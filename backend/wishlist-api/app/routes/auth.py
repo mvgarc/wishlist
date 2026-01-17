@@ -1,37 +1,26 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.database import SessionLocal
-from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse
-from app.core.security import hash_password
+from app.schemas.auth import LoginRequest, TokenResponse
+from app.core.security import verify_password, create_access_token
+from app.crud.user import get_user_by_email
+from app.database import get_db
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+@router.post("/login", response_model=TokenResponse)
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, data.email)
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
+    if not user or not verify_password(data.password, user.password):
         raise HTTPException(
-            status_code=400,
-            detail="Email ya registrado"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials"
         )
 
-    new_user = User(
-        nombre=user.nombre,
-        email=user.email,
-        password=hash_password(user.password)
-    )
+    token = create_access_token({"sub": str(user.id)})
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return new_user
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
