@@ -8,3 +8,4 @@ class User(Base):
     nombre = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
+    listas = relationship("Lista", back_populates="owner", cascade="all, delete")
