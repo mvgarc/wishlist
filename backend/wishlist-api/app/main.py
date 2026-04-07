@@ -14,3 +14,7 @@ app.include_router(auth_router)
 @app.get("/")
 def root():
     return {"message": "Wishlist API running"}
+
+@app.get("/admin")
+def admin():
+    return {"message": "Hi Admin"}
