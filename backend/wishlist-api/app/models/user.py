@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from app.database import Base
+from app.db.session import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -8,4 +8,4 @@ class User(Base):
     nombre = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
-    listas = relationship("Lista", back_populates="owner", cascade="all, delete")
+    
