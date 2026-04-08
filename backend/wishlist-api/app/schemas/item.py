@@ -8,7 +8,11 @@ class ItemCreate(BaseModel):
     cantidad: int = 1
 
 class ItemUpdate(BaseModel):
-    estado: EstadoItem
+    nombre: str | None = None
+    descripcion: str | None = None
+    url: str | None = None
+    cantidad: int | None = None
+    estado: EstadoItem | None = None
 
 class ItemResponse(BaseModel):
     id: int

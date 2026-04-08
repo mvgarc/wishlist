@@ -6,6 +6,11 @@ class ListaCreate(BaseModel):
     descripcion: str | None = None
     es_publica: bool = True
 
+class ListaUpdate(BaseModel):
+    titulo: str | None = None
+    descripcion: str | None = None
+    es_publica: bool | None = None
+
 class ListaResponse(BaseModel):
     id: int
     titulo: str
